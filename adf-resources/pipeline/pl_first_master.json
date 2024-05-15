@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ingest",
+				"name": "data_ingest",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"policy": {
@@ -29,7 +29,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "ingest",
+						"activity": "data_ingest",
 						"dependencyConditions": [
 							"Succeeded"
 						]
