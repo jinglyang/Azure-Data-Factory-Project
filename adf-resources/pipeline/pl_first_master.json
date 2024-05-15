@@ -1,0 +1,67 @@
+{
+	"name": "pl_first_master",
+	"properties": {
+		"activities": [
+			{
+				"name": "ingest",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_first_ingest",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"pl_parameter_tag": {
+							"value": "@pipeline().parameters.mpl_parameter_tag",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "first_transformation",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ingest",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_first_transformation",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"pl_trans_parameter_tag": {
+							"value": "@pipeline().parameters.mpl_parameter_tag",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"mpl_parameter_tag": {
+				"type": "string",
+				"defaultValue": "python"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-05-15T06:46:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
