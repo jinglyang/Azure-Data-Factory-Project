@@ -49,6 +49,67 @@
 						"pl_trans_parameter_tag": {
 							"value": "@pipeline().parameters.mpl_parameter_tag",
 							"type": "Expression"
+						},
+						"union_folder": {
+							"value": "@pipeline().parameters.mplp_union_folder",
+							"type": "Expression"
+						},
+						"plp_dim_folder": {
+							"value": "@pipeline().parameters.mplp_dim_folder",
+							"type": "Expression"
+						},
+						"plp_fact_folder": {
+							"value": "@pipeline().parameters.mplp_fact_folder",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "first_transformation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_first_load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"pip_tags": {
+							"value": "@pipeline().parameters.mpl_parameter_tag",
+							"type": "Expression"
+						},
+						"sql_schema": {
+							"value": "@pipeline().parameters.mplp_sql_schema",
+							"type": "Expression"
+						},
+						"sql_table_fact": {
+							"value": "@pipeline().parameters.mplp_sql_fact_table",
+							"type": "Expression"
+						},
+						"sql_table_dim": {
+							"value": "@pipeline().parameters.mplp_sql_dim_table",
+							"type": "Expression"
+						},
+						"plp_fact_folder": {
+							"value": "@pipeline().parameters.mplp_fact_folder",
+							"type": "Expression"
+						},
+						"plp_dim_folder": {
+							"value": "@pipeline().parameters.mplp_dim_folder",
+							"type": "Expression"
 						}
 					}
 				}
@@ -56,8 +117,35 @@
 		],
 		"parameters": {
 			"mpl_parameter_tag": {
+				"type": "array",
+				"defaultValue": [
+					"python",
+					"databricks"
+				]
+			},
+			"mplp_union_folder": {
 				"type": "string",
-				"defaultValue": "python"
+				"defaultValue": "union"
+			},
+			"mplp_fact_folder": {
+				"type": "string",
+				"defaultValue": "fact"
+			},
+			"mplp_dim_folder": {
+				"type": "string",
+				"defaultValue": "dim"
+			},
+			"mplp_sql_schema": {
+				"type": "string",
+				"defaultValue": "sto"
+			},
+			"mplp_sql_fact_table": {
+				"type": "string",
+				"defaultValue": "factQuestions"
+			},
+			"mplp_sql_dim_table": {
+				"type": "string",
+				"defaultValue": "factOwners"
 			}
 		},
 		"annotations": [],

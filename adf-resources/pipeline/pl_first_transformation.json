@@ -3,16 +3,187 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "landing_to_bronze_flow",
-				"type": "ExecuteDataFlow",
+				"name": "ForEach1",
+				"type": "ForEach",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
-						"activity": "Delete1",
+						"activity": "purgeBronze",
 						"dependencyConditions": [
 							"Completed"
 						]
 					}
 				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.pl_trans_parameter_tag",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "landing_to_bronze_flow",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "df_dataflow1",
+									"type": "DataFlowReference",
+									"datasetParameters": {
+										"source1": {
+											"ds_parameter_folder": {
+												"value": "@item()",
+												"type": "Expression"
+											}
+										},
+										"sink1": {
+											"ds_output_parameter_folder": {
+												"value": "@item()",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						},
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "landing_to_bronze_flow",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"wildcardFolderPath": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"wildcardFileName": "*.parquet",
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "ParquetReadSettings"
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_Parquet_bronze",
+									"type": "DatasetReference",
+									"parameters": {
+										"ds_output_parameter_folder": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_Parquet_bronze",
+									"type": "DatasetReference",
+									"parameters": {
+										"ds_output_parameter_folder": {
+											"value": "@pipeline().parameters.union_folder",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "purgeBronze",
+				"type": "Delete",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_Parquet_bronze",
+						"type": "DatasetReference",
+						"parameters": {
+							"ds_output_parameter_folder": " "
+						}
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "ls_AzureBlobStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "log"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "bronze_to_silver_flow_copy1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -23,18 +194,24 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_dataflow1",
+						"referenceName": "df_integration",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
-								"ds_parameter_folder": {
-									"value": "@pipeline().parameters.pl_trans_parameter_tag",
+								"ds_output_parameter_folder": {
+									"value": "@pipeline().parameters.union_folder",
 									"type": "Expression"
 								}
 							},
-							"sink1": {
-								"ds_output_parameter_folder": {
-									"value": "@pipeline().parameters.pl_trans_parameter_tag",
+							"sinkFactTable": {
+								"dsp_folder": {
+									"value": "@pipeline().parameters.plp_fact_folder",
+									"type": "Expression"
+								}
+							},
+							"sinkDimTable": {
+								"dsp_folder": {
+									"value": "@pipeline().parameters.plp_dim_folder",
 									"type": "Expression"
 								}
 							}
@@ -48,9 +225,16 @@
 				}
 			},
 			{
-				"name": "Delete1",
+				"name": "purgeSilver",
 				"type": "Delete",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -61,13 +245,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "ds_Parquet1",
+						"referenceName": "ds_Parquet_silver",
 						"type": "DatasetReference",
 						"parameters": {
-							"ds_output_parameter_folder": {
-								"value": "@pipeline().parameters.pl_trans_parameter_tag",
-								"type": "Expression"
-							}
+							"dsp_folder": " "
 						}
 					},
 					"logStorageSettings": {
@@ -88,6 +269,15 @@
 		],
 		"parameters": {
 			"pl_trans_parameter_tag": {
+				"type": "array"
+			},
+			"union_folder": {
+				"type": "string"
+			},
+			"plp_dim_folder": {
+				"type": "string"
+			},
+			"plp_fact_folder": {
 				"type": "string"
 			}
 		},
