@@ -1,0 +1,9 @@
+{
+	"name": "adf-first-test-jly",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "749af4b2-9722-449e-9ce5-4c0a2449692b",
+		"tenantId": "5672ddb6-e0fc-4ef3-ad70-ca70344aed62"
+	}
+}
