@@ -5,11 +5,11 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://api.stackexchange.com/2.3/answers?order=desc&sort=activity&site=stackoverflow",
+			"url": "https://api.stackexchange.com/2.3",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Basic",
 			"userName": "jinglinyang",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDg1OTlEQjAwLTM4MkYtNDMzMi1CRjdBLTg1MDVBRUU2QUZBRV85ZmUwNTMxMC1mZmFjLTRiY2YtOWMyNC00MDk4OGVjNDVhZjAiDQp9"
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDg1OTlEQjAwLTM4MkYtNDMzMi1CRjdBLTg1MDVBRUU2QUZBRV83ODFjNTE5NS1lMTA0LTRkZDgtODg2Ny1lM2M1M2E1YTRlMTciDQp9"
 		}
 	}
 }
