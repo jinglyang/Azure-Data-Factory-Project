@@ -5,25 +5,16 @@
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "@pipeline().parameters.pl_parameter_tag",
-						"type": "Expression"
-					},
 					"activities": [
 						{
 							"name": "Copy data1_copy1",
 							"type": "Copy",
-							"dependsOn": [
-								{
-									"activity": "Delete1",
-									"dependencyConditions": [
-										"Completed"
-									]
-								}
-							],
+							"dependsOn": [],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -78,46 +69,43 @@
 									}
 								}
 							]
-						},
-						{
-							"name": "Delete1",
-							"type": "Delete",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataset": {
-									"referenceName": "ds_Json1",
-									"type": "DatasetReference",
-									"parameters": {
-										"ds_parameter_folder": {
-											"value": "@item()",
-											"type": "Expression"
-										}
-									}
-								},
-								"logStorageSettings": {
-									"linkedServiceName": {
-										"referenceName": "ls_AzureBlobStorage1",
-										"type": "LinkedServiceReference"
-									},
-									"path": "log"
-								},
-								"enableLogging": true,
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								}
-							}
 						}
 					]
+				}
+			},
+			{
+				"name": "Delete1",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_Json1",
+						"type": "DatasetReference",
+						"parameters": {
+							"ds_parameter_folder": " "
+						}
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "ls_AzureBlobStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "log"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
 				}
 			}
 		],
