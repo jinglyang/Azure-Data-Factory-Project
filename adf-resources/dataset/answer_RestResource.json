@@ -1,0 +1,15 @@
+{
+	"name": "answer_RestResource",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestService1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "answers?order=desc&sort=activity&site=stackoverflow"
+		},
+		"schema": []
+	}
+}
